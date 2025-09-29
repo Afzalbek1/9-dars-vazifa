@@ -41,16 +41,6 @@ send_toAdminkb = ReplyKeyboardMarkup(
 	],resize_keyboard=True
 )
 
-searchClickkb = InlineKeyboardMarkup(
-	inline_keyboard= [
-		[InlineKeyboardButton(text="📚 Title", callback_data="title")],
-        [InlineKeyboardButton(text="🎭 Genre", callback_data="genre")],
-        [InlineKeyboardButton(text="✍️ Author", callback_data="author")],
-        [InlineKeyboardButton(text="⬅️ Back", callback_data="back")]
-	]
-)
-
-
 all_kb = ReplyKeyboardMarkup (
 	keyboard= [
 		[KeyboardButton(text="⬅️ back"), KeyboardButton(text="📋 Main menu")]
