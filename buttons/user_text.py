@@ -38,3 +38,12 @@ Admin tezda javob beradi.
 Rahmat!
 
 """
+
+
+CAPTION_BOOK = """
+Kiton nomi: Qaysidur kitob\n
+Mualif: Kimdur\n
+Narxi: 00.000\n\n 
+
+Kerakli tugmani bosing
+"""

@@ -1,6 +1,6 @@
 from aiogram.types import (
-	ReplyKeyboardMarkup, ReplyKeyboardRemove, 
-	KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
+	ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton,
+	KeyboardButton
 )
 
 register_kb = ReplyKeyboardMarkup( 
@@ -45,4 +45,20 @@ all_kb = ReplyKeyboardMarkup (
 	keyboard= [
 		[KeyboardButton(text="⬅️ back"), KeyboardButton(text="📋 Main menu")]
 	],resize_keyboard=True
+)
+
+order_kb = ReplyKeyboardMarkup(
+    keyboard=[
+		[KeyboardButton(text="⬅️ Back")]
+	],resize_keyboard=True
+)
+
+order_inline_kb = InlineKeyboardMarkup(
+	inline_keyboard=[
+		[
+			InlineKeyboardButton(text="➕", callback_data="add"),
+			InlineKeyboardButton(text="1", callback_data="one"),
+			InlineKeyboardButton(text="➖", callback_data="subtract")
+		]
+	]
 )

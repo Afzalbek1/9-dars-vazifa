@@ -2,10 +2,12 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram import Router, F
 from aiogram.filters import Command, CommandStart
 
-from buttons import REG_TEXT, GET_NAME, GET_PHONE,ERR_NAME, SUCCES_REG,ALREADY_IN	
-from buttons import register_kb, phoneNumber_kb, menu_kb, after_menukb, send_toAdminkb
+from buttons import REG_TEXT, GET_NAME, GET_PHONE,ERR_NAME, SUCCES_REG,ALREADY_IN,CAPTION_BOOK
+from buttons import register_kb, phoneNumber_kb, menu_kb, after_menukb, send_toAdminkb, order_inline_kb, order_kb
 from buttons import CONTACT_ADMIN
 
+
+from aiogram.types import FSInputFile
 from states import Register, FSMContext
 from filters import validate_name,validate_phone
 from database import save_users, is_register_byChatId 
@@ -87,4 +89,10 @@ async def send_admin(message:Message):
 @user_router.message(F.text=="⬅️ back") 
 async def back_menu(message:Message):
     await message.answer("📋 Main menu", reply_markup=after_menukb)
-    
+
+
+@user_router.message(F.text == "🛒 Order") 
+async def order_hanler(message:Message): 
+    await message.answer("Your orders is loading..", reply_markup=order_kb)
+    photo_path = FSInputFile("imgs/image.png")
+    await message.answer_photo(photo=photo_path, caption=CAPTION_BOOK, reply_markup=order_inline_kb)
