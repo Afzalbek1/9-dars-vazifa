@@ -1,2 +1,3 @@
-from .connection import * 
-from .query import * 
+from .connection import *
+from .query import *
+from .env import env

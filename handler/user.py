@@ -96,3 +96,4 @@ async def order_hanler(message:Message):
     await message.answer("Your orders is loading..", reply_markup=order_kb)
     photo_path = FSInputFile("imgs/image.png")
     await message.answer_photo(photo=photo_path, caption=CAPTION_BOOK, reply_markup=order_inline_kb)
+    

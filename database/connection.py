@@ -1,16 +1,6 @@
-from environs import Env
-from psycopg2 import connect
-
-env = Env()
-env.read_env()
+import sqlite3
 
 
 def get_connect():
-    return connect(
-        user=env.str("DB_USER"),
-        password=env.str("DB_PASSWORD"),
-        database=env.str("DB_DATABASE"),
-        host=env.str("DB_HOST"),
-        port=env.str("DB_PORT"),
-    )
+    return sqlite3.connect('bookstore.db')
 
