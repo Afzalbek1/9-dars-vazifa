@@ -86,3 +86,85 @@ def is_admin(chat_id):
         return False
     finally:
         conn.close()
+
+# Book CRUD functions
+def add_book(title, description, author, price, genre, quantity):
+    conn = get_connect()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO books (title, description, author, price, genre, quantity)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (title, description, author, price, genre, quantity))
+        conn.commit()
+        return cursor.lastrowid
+    except Exception as e:
+        print(f"Error adding book: {e}")
+        return None
+    finally:
+        conn.close()
+
+def get_all_books():
+    conn = get_connect()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM books")
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error getting books: {e}")
+        return []
+    finally:
+        conn.close()
+
+def get_book_by_id(book_id):
+    conn = get_connect()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM books WHERE id = ?", (book_id,))
+        return cursor.fetchone()
+    except Exception as e:
+        print(f"Error getting book: {e}")
+        return None
+    finally:
+        conn.close()
+
+def update_book(book_id, title, description, author, price, genre, quantity):
+    conn = get_connect()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE books SET title = ?, description = ?, author = ?, price = ?, genre = ?, quantity = ?
+            WHERE id = ?
+        """, (title, description, author, price, genre, quantity, book_id))
+        conn.commit()
+        return cursor.rowcount > 0
+    except Exception as e:
+        print(f"Error updating book: {e}")
+        return False
+    finally:
+        conn.close()
+
+def delete_book(book_id):
+    conn = get_connect()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM books WHERE id = ?", (book_id,))
+        conn.commit()
+        return cursor.rowcount > 0
+    except Exception as e:
+        print(f"Error deleting book: {e}")
+        return False
+    finally:
+        conn.close()
+
+def get_all_users():
+    conn = get_connect()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id, chat_id, name, phone, username, is_active, is_admin FROM users")
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error getting users: {e}")
+        return []
+    finally:
+        conn.close()
