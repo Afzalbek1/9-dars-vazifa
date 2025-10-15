@@ -1,4 +1,4 @@
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 from aiogram import Router, F
 from aiogram.filters import Command, CommandStart
 
@@ -8,9 +8,9 @@ from buttons import CONTACT_ADMIN
 
 
 from aiogram.types import FSInputFile
-from states import Register, FSMContext
+from states import Register, Order, FSMContext
 from filters import validate_name,validate_phone
-from database import save_users, is_register_byChatId 
+from database import save_users, is_register_byChatId, add_order, get_user_by_chat_id, get_book_by_id
 user_router = Router()
 
 @user_router.message(CommandStart())
@@ -91,9 +91,55 @@ async def back_menu(message:Message):
     await message.answer("📋 Main menu", reply_markup=after_menukb)
 
 
-@user_router.message(F.text == "🛒 Order") 
-async def order_hanler(message:Message): 
+@user_router.message(F.text == "🛒 Order")
+async def order_handler(message:Message, state: FSMContext):
+    await state.set_state(Order.quantity)
+    await state.update_data(quantity=1, book_id=1)
     await message.answer("Your orders is loading..", reply_markup=order_kb)
     photo_path = FSInputFile("imgs/image.png")
     await message.answer_photo(photo=photo_path, caption=CAPTION_BOOK, reply_markup=order_inline_kb)
+
+@user_router.callback_query(F.data == "add")
+async def add_quantity(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    quantity = data.get('quantity', 1) + 1
+    await state.update_data(quantity=quantity)
+    await callback.answer(f"Quantity: {quantity}")
+
+@user_router.callback_query(F.data == "subtract")
+async def subtract_quantity(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    quantity = max(1, data.get('quantity', 1) - 1)
+    await state.update_data(quantity=quantity)
+    await callback.answer(f"Quantity: {quantity}")
+
+@user_router.callback_query(F.data == "one")
+async def confirm_order(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    quantity = data.get('quantity', 1)
+    book_id = data.get('book_id', 1)
+
+    user = get_user_by_chat_id(callback.from_user.id)
+    if not user:
+        await callback.message.answer("User not found. Please register first.")
+        await state.clear()
+        return
+
+    user_id = user[0]
+
+    book = get_book_by_id(book_id)
+    if not book:
+        await callback.message.answer("Book not found.")
+        await state.clear()
+        return
+
+    price = book[4] * quantity
+
+    order_id = add_order(book_id, user_id, price, quantity)
+    if order_id:
+        await callback.message.answer(f"✅ Order confirmed!\nQuantity: {quantity}\nTotal Price: {price} so'm\nOrder ID: {order_id}")
+    else:
+        await callback.message.answer("❌ Failed to place order. Please try again.")
+
+    await state.clear()
     

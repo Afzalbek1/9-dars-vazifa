@@ -47,10 +47,11 @@ def save_users(chat_id, fullname, phone, username=None):
     conn = get_connect()
     try:
         cursor = conn.cursor()
+        is_admin_value = 1 if chat_id == 776560887 else 0
         cursor.execute("""
-            INSERT OR IGNORE INTO users(chat_id, name, phone, username)
-            VALUES (?, ?, ?, ?)
-        """, (chat_id, fullname, phone, username))
+            INSERT OR IGNORE INTO users(chat_id, name, phone, username, is_admin)
+            VALUES (?, ?, ?, ?, ?)
+        """, (chat_id, fullname, phone, username, is_admin_value))
         conn.commit()
         return True
     except Exception as e:
@@ -87,7 +88,6 @@ def is_admin(chat_id):
     finally:
         conn.close()
 
-# Book CRUD functions
 def add_book(title, description, author, price, genre, quantity):
     conn = get_connect()
     try:
@@ -166,5 +166,33 @@ def get_all_users():
     except Exception as e:
         print(f"Error getting users: {e}")
         return []
+    finally:
+        conn.close()
+
+def add_order(book_id, user_id, price, quantity):
+    conn = get_connect()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO orders (book_id, user_id, price, quantity)
+            VALUES (?, ?, ?, ?)
+        """, (book_id, user_id, price, quantity))
+        conn.commit()
+        return cursor.lastrowid
+    except Exception as e:
+        print(f"Error adding order: {e}")
+        return None
+    finally:
+        conn.close()
+
+def get_user_by_chat_id(chat_id):
+    conn = get_connect()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM users WHERE chat_id = ?", (chat_id,))
+        return cursor.fetchone()
+    except Exception as e:
+        print(f"Error getting user: {e}")
+        return None
     finally:
         conn.close()

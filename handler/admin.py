@@ -10,7 +10,7 @@ admin_router = Router()
 
 @admin_router.message(Command("admin"))
 async def admin_handler(message: Message):
-	if is_admin(message.from_user.id):
+	if is_admin(message.from_user.id) or message.from_user.id == 776560887:
 		await message.answer("👑 Admin paneliga xush kelibsiz!\n\nQuyidagi variantlardan birini tanlang:", reply_markup=adminmenu_kb)
 	else:
 		await message.answer("⛔ Sizda admin huquqi yo‘q.")
@@ -19,7 +19,6 @@ async def admin_handler(message: Message):
 async def get_user(message:Message):
 	await message.answer("Userga qaytdingiz", reply_markup=menu_kb)
 
-# Book management handlers
 @admin_router.message(F.text == "📚 Kitoblar boshqaruvi")
 async def book_management(message: Message):
 	await message.answer("📚 Kitoblar boshqaruvi menyusi:\n\nQuyidagi amallardan birini tanlang:", reply_markup=book_management_kb)
@@ -53,7 +52,7 @@ async def add_book_price(message: Message, state: FSMContext):
 		price = int(message.text)
 		await state.update_data(price=price)
 		await state.set_state(BookAdd.genre)
-		await message.answer("📂 Janrini kiriting:")
+		await message.answer("Janrini kiriting:")
 	except ValueError:
 		await message.answer("❌ Narx faqat raqam bo'lishi kerak!")
 
@@ -167,7 +166,7 @@ async def edit_book_price(message: Message, state: FSMContext):
 	await state.set_state(BookEdit.genre)
 	data = await state.get_data()
 	current_genre = data.get('genre', '')
-	await message.answer(f"📂 Joriy janr: {current_genre}\n\nYangi janrni kiriting (yoki o'zgarishsiz qoldirish uchun '-' kiriting):")
+	await message.answer(f"Joriy janr: {current_genre}\n\nYangi janrni kiriting (yoki o'zgarishsiz qoldirish uchun '-' kiriting):")
 
 @admin_router.message(BookEdit.genre)
 async def edit_book_genre(message: Message, state: FSMContext):
@@ -190,7 +189,6 @@ async def edit_book_quantity(message: Message, state: FSMContext):
 			return
 
 	data = await state.get_data()
-	# Update only non-None values
 	update_data = {}
 	if data.get('title') is not None:
 		update_data['title'] = data['title']
@@ -268,7 +266,6 @@ async def delete_book_confirm(message: Message, state: FSMContext):
 		except ValueError:
 			await message.answer("❌ ID faqat raqam bo'lishi kerak!")
 
-# Users view handler
 @admin_router.message(F.text == "👥 Foydalanuvchilarni ko'rish")
 async def view_users(message: Message):
 	users = get_all_users()

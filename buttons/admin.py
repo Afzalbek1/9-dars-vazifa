@@ -27,7 +27,6 @@ back_kb = ReplyKeyboardMarkup(
 	],resize_keyboard=True
 )
 
-# Inline keyboards for book actions
 def get_book_inline_kb(book_id):
 	return InlineKeyboardMarkup(
 		inline_keyboard=[
